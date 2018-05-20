@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@inject SignInManager<IdentityUser> SignInManager
+
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -8,6 +12,38 @@
    <link href="~/content/site.css" rel="stylesheet" />
 </head>
 <body>
+   <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+         <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+               <li><a asp-controller="Home" asp-action="Index" class="navbar-brand">Behanie PieShop</a></li>
+               <li><a asp-controller="Feedback" asp-action="Index" class="navbar-brand">Feedback</a></li>
+               @*This SignInManager is an alias that was injected at the top of the page*@
+               @if (SignInManager.IsSignedIn(User))
+               {
+               <ul class="nav navbar-nav">
+                  <li>Hi @User.Identity.Name </li>
+               </ul>
+                  <form asp-area="" asp-controller="Account" asp-action="Logout" id="logoutForm"
+                        method="post" class="navbar-right">
+                     <ul class="nav navbar-nav navbar-right">
+                        <li><a href="javascript:document.getElementById('logoutForm').submit()">Logout</a></li>
+                     </ul>
+                  </form>
+               }
+               else
+               {
+                  <ul class="nav navbar-nav navbar-right">
+                     <li><a id="registerLink" asp-controller="Account" asp-action="Register">Register</a></li>
+                     <li><a id="loginLink" asp-controller="Account" asp-action="Login">Log in</a></li>
+                  </ul>
+               }
+            </ul>
+         </div>
+      </div>
+
+
+   </nav>
    <div class="container body-content">
       <div class="row">
          @RenderBody()

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +24,12 @@ namespace BethanysPieShop
          services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
 
+         //Adding Identity Management 
+         services.AddIdentity<IdentityUser, IdentityRole>()
+            .AddEntityFrameworkStores<AppDbContext>();
+
          services.AddScoped<IPieRepository, PieRepository>();
+         services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 
          services.AddMvc();
       }
@@ -36,10 +42,13 @@ namespace BethanysPieShop
             app.UseDeveloperExceptionPage();
             app.UseStatusCodePages();
          }
-
+         
          app.UseStaticFiles();
 
-         app.UseMvcWithDefaultRoute();
+         app.UseAuthentication();
+
+         //Second last before Authentication
+         app.UseMvc(route => { route.MapRoute("default", "{controller=Home}/{action=Index}/{id?}"); });
 
          app.Run(async (context) =>
          {
